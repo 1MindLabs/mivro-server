@@ -55,13 +55,15 @@ Follow these steps to set up and run the Mivro Python Server on your local machi
 #### Option 1: Docker Setup
 
 1. **Pull the Docker Image**:
+
    ```bash
-   docker pull areebahmeddd/mivro-backend:latest
+   docker pull areebahmeddd/mivro-python:latest
    ```
 
 2. **Run the Docker Container**:
+
    ```bash
-   docker run -p 5000:5000 -e GEMINI_API_KEY=your_gemini_api_key areebahmeddd/mivro-backend:latest
+   docker run -p 5000:5000 -e GEMINI_API_KEY=your_gemini_api_key areebahmeddd/mivro-python:latest
    ```
 
    - Replace `your_gemini_api_key` with your actual API key.
@@ -69,19 +71,23 @@ Follow these steps to set up and run the Mivro Python Server on your local machi
 #### Option 2: Local Setup
 
 1. **Fork the Repository**:
-   - Go to the [Mivro Python Server repository](https://github.com/1MindLabs/mivro-python-server) and click "Fork" to create a copy under your GitHub account.
+
+   - Go to the [Mivro Python Server repository](https://github.com/1MindLabs/mivro-python) and click "Fork" to create a copy under your GitHub account.
 
 2. **Clone the Repository**:
+
    ```bash
-   git clone https://github.com/<your-username>/mivro-python-server.git
+   git clone https://github.com/<your-username>/mivro-python.git
    ```
 
 3. **Create a Virtual Environment (Optional but Recommended)**:
+
    ```bash
    python -m venv .venv
    ```
 
 4. **Activate the Virtual Environment**:
+
    - **Windows**:
      ```bash
      .venv\Scripts\activate
@@ -92,12 +98,15 @@ Follow these steps to set up and run the Mivro Python Server on your local machi
      ```
 
 5. **Install Dependencies**:
+
    ```bash
    pip install -r requirements.txt
    ```
 
 6. **Set Up Environment Variables**:
+
    - Create a `.env` file in the project root directory with the following template:
+
      ```ini
      FLASK_SECRET_KEY=your_secret_key
      GEMINI_API_KEY=your_gemini_api_key
@@ -147,21 +156,21 @@ To interact with the Mivro Python Server, you can use API calls via Postman or a
 
 ### Example Response
 
-To see an example of the response you can expect, refer to the [response-example.json](https://github.com/1MindLabs/mivro-documentation/blob/main/response-example.json) file.
+To see an example of the response you can expect, refer to the [response-example.json](https://github.com/1MindLabs/mivro-docs/blob/main/response-example.json) file.
 
 ## Documentation
 
-For detailed documentation, please visit the [Documentation Repository](https://github.com/1MindLabs/mivro-documentation).
+For detailed documentation, please visit the [Documentation Repository](https://github.com/1MindLabs/mivro-docs).
 
 ## Contributing
 
-We welcome contributions! Please follow the guidelines in our [Contributing Guide](https://github.com/1MindLabs/mivro-documentation/blob/main/CONTRIBUTING.md) to get started.
+We welcome contributions! Please follow the guidelines in our [Contributing Guide](https://github.com/1MindLabs/mivro-docs/blob/main/CONTRIBUTING.md) to get started.
 
 ## License
 
-This project is licensed under the [MIT License](https://github.com/1MindLabs/mivro-documentation/blob/main/LICENSE).
+This project is licensed under the [MIT License](https://github.com/1MindLabs/mivro-docs/blob/main/LICENSE).
 
 ## Acknowledgments
 
 - [Open Food Facts](https://world.openfoodfacts.org) for providing access to a comprehensive food product database.
-- [All Contributors](https://github.com/1MindLabs/mivro-python-server/graphs/contributors) for their valuable contributions to the development and improvement of this project.
+- [All Contributors](https://github.com/1MindLabs/mivro-python/graphs/contributors) for their valuable contributions to the development and improvement of this project.

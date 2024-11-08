@@ -6,5 +6,5 @@ services:
     ports:
       - 5000:5000
     volumes:
-      - .:/mivro-backend
+      - .:/mivro-python
     restart: always
