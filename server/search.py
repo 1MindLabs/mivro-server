@@ -1,5 +1,5 @@
 # Core library imports: Open Food Facts API setup
-import openfoodfacts
+from openfoodfacts import API, APIVersion, Country, Environment, Flavor
 import json
 import sys
 from flask import Blueprint, Response, request, jsonify
@@ -13,7 +13,14 @@ from gemini import lumi, swapr
 
 # Blueprint for the search routes
 search_blueprint = Blueprint('search', __name__)
-api = openfoodfacts.API(user_agent='Mivro/1.0') # Initialize the Open Food Facts API client
+# Initialize the Open Food Facts API client
+api = API(
+    user_agent='Mivro/1.0',
+    country=Country.world,
+    flavor=Flavor.off,
+    version=APIVersion.v2,
+    environment=Environment.org,
+)
 
 @search_blueprint.route('/barcode', methods=['POST'])
 def barcode() -> Response:
@@ -84,7 +91,7 @@ def barcode() -> Response:
         runtime_error('barcode', str(exc), product_barcode=product_barcode)
         return jsonify({'error': str(exc)}), 500
 
-# DEPRECATED: text_search function fails to return the expected results from the Open Food Facts API
+# DEPRECATED: text_search function fails to return the expected results from the Open Food Facts API (v0.4.0)
 # @search_blueprint.route('/text', methods=['POST'])
 # def text() -> Response:
 #     try:

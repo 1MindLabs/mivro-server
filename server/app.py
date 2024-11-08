@@ -28,7 +28,9 @@ app.register_error_handler(Exception, error_handler)
 # Enable CORS for all routes under /api/*
 CORS(app, resources={
     r'/api/*': {
-        'origins': ['*'],
+        'origins': ['http://localhost:3000', 'https://mivro.org'],
+        'methods': ['GET', 'POST', 'PUT', 'DELETE'],
+        'allow_headers': ['Content-Type', 'Authorization'],
         'supports_credentials': True
     }
 })
