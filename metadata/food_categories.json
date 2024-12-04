@@ -64,7 +64,11 @@
   ],
   "Nuts": ["Cashew Nuts"],
   "Oil": ["Cotton Seed Oil", "Hydrogenated Vegetable Oil", "Rapeseed Oil"],
-  "Palm-Oil": ["Edible Palm Vegetable Oil", "Edible Vegetable Oil", "Vegetable Oil Palm Oil"],
+  "Palm-Oil": [
+    "Edible Palm Vegetable Oil",
+    "Edible Vegetable Oil",
+    "Vegetable Oil Palm Oil"
+  ],
   "Protein": ["Proteins"],
   "Rice": ["Rice Meal"],
   "Salt": [

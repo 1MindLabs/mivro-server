@@ -113,7 +113,7 @@ def runtime_error(function_name: str, error_message: str, **kwargs) -> None:
 
         print(f'[Database] Error logged for "{function_name}": {error_message}')
     except Exception as exc:
-        runtime_error('runtime_error', str(exc), function_name=function_name, error_message=error_message, **kwargs)
+        runtime_error('runtime_error', str(exc), function_name=function_name, error_message=error_message)
         return {'error': 'Firestore storage error: ' + str(exc)}, 500
 
 def register_user_profile(email: str, password: str) -> None:

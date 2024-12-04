@@ -53,10 +53,10 @@ def update_profile() -> Response:
             update_data['health_profile.height'] = height
         if (weight := request.json.get('weight')) not in [None, '']:
             update_data['health_profile.weight'] = weight
-        if (dietary_preferences := request.json.get('dietary_preferences')) not in [None, '']:
-            update_data['health_profile.dietary_preferences'] = dietary_preferences
         if (allergies := request.json.get('allergies')) not in [None, '']:
             update_data['health_profile.allergies'] = allergies
+        if (dietary_preferences := request.json.get('dietary_preferences')) not in [None, '']:
+            update_data['health_profile.dietary_preferences'] = dietary_preferences
         if (medical_conditions := request.json.get('medical_conditions')) not in [None, '']:
             update_data['health_profile.medical_conditions'] = medical_conditions
 
@@ -88,8 +88,8 @@ def health_profile() -> Response:
             gender=request.json.get('gender'),
             height=request.json.get('height'),
             weight=request.json.get('weight'),
-            dietary_preferences=request.json.get('dietary_preferences'),
             allergies=request.json.get('allergies'),
+            dietary_preferences=request.json.get('dietary_preferences'),
             medical_conditions=request.json.get('medical_conditions')
         )
 

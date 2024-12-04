@@ -37,8 +37,8 @@ class HealthProfile:
         self.height = height
         self.weight = weight
         self.body_mass_index = body_mass_index or calculate_bmi(weight, height)
-        self.dietary_preferences = dietary_preferences or []
         self.allergies = allergies or []
+        self.dietary_preferences = dietary_preferences or []
         self.medical_conditions = medical_conditions or []
 
     def to_dict(self) -> dict:
@@ -48,8 +48,8 @@ class HealthProfile:
             'height': self.height,
             'weight': self.weight,
             'body_mass_index': self.body_mass_index,
-            'dietary_preferences': self.dietary_preferences,
             'allergies': self.allergies,
+            'dietary_preferences': self.dietary_preferences,
             'medical_conditions': self.medical_conditions
         }
 
