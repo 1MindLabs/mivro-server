@@ -9,7 +9,7 @@ from datetime import datetime
 from models import AccountInfo, ScanHistory, SearchHistory
 
 # Initialize the Firebase Admin SDK with the service account key
-credential = credentials.Certificate('firebase-adminsdk.json')
+credential = credentials.Certificate('firebase-config.json')
 firebase_admin.initialize_app(credential)
 database = firestore.client() # Initialize the Firestore database client
 

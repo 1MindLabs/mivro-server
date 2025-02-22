@@ -63,10 +63,10 @@ Follow these steps to set up and run the Mivro Python Server on your local machi
 2. **Run the Docker Container**:
 
    ```bash
-   docker run -p 5000:5000 -e GEMINI_API_KEY=your_gemini_api_key areebahmeddd/mivro-python:latest
+   docker run -p 5000:5000 -e GEMINI_KEY=your_gemini_key areebahmeddd/mivro-python:latest
    ```
 
-   - Replace `your_gemini_api_key` with your actual API key.
+   - Replace `your_gemini_key` with your actual API key.
 
 #### Option 2: Local Setup
 
@@ -108,11 +108,11 @@ Follow these steps to set up and run the Mivro Python Server on your local machi
    - Create a `.env` file in the project root directory with the following template:
 
      ```ini
-     FLASK_SECRET_KEY=your_secret_key
-     GEMINI_API_KEY=your_gemini_api_key
+     FLASK_KEY=your_secret_key
+     GEMINI_KEY=your_GEMINI_KEY
      ```
 
-   - Create a `firebase-adminsdk.json` file in the project root directory with the following template:
+   - Create a `firebase-config.json` file in the project root directory with the following template:
      ```json
      {
        "type": "service_account",

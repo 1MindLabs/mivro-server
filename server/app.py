@@ -3,7 +3,7 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 
 # Local project-specific imports: Configuration, blueprints, and middleware
-from config import FLASK_SECRET_KEY
+from config import FLASK_KEY
 from auth import auth_blueprint
 from search import search_blueprint
 from gemini import ai_blueprint
@@ -12,7 +12,7 @@ from chat import chat_blueprint
 from middleware import auth_handler, error_handler
 
 app = Flask(__name__) # Initialize Flask application instance
-app.secret_key = FLASK_SECRET_KEY # Set the Flask secret key for session management
+app.secret_key = FLASK_KEY # Set the Flask secret key for session management
 
 # Register blueprints for API routes
 app.register_blueprint(auth_blueprint, url_prefix='/api/v1/auth')
@@ -28,7 +28,7 @@ app.register_error_handler(Exception, error_handler)
 # Enable CORS for all routes under /api/*
 CORS(app, resources={
     r'/api/*': {
-        'origins': ['http://localhost:3000', 'https://mivro.org'],
+        'origins': ['https://mivro.org', 'http://localhost:3000'],
         'methods': ['GET', 'POST', 'PUT', 'DELETE'],
         'allow_headers': ['Content-Type', 'Authorization'],
         'supports_credentials': True

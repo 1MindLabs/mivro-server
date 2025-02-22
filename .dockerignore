@@ -4,7 +4,9 @@ __pycache__/
 
 # Project-specific files
 .env
-firebase-adminsdk.json
+.env.example
+.pre-commit-config.yaml
+firebase-config.json
 .github/
 tests/
 .gitignore

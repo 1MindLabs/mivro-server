@@ -7,7 +7,7 @@ from flask import Blueprint, Response, request, jsonify
 from werkzeug.utils import secure_filename
 
 # Local project-specific imports: Configuration, models, and utilities
-from config import GEMINI_API_KEY
+from config import GEMINI_KEY
 from models import ChatHistory
 from database import runtime_error
 from utils import health_profile, chat_history
@@ -15,11 +15,11 @@ from utils import health_profile, chat_history
 # Blueprint for the ai routes
 ai_blueprint = Blueprint('ai', __name__)
 # Load the Gemini API key from the environment variables
-if GEMINI_API_KEY:
-    print('GEMINI_API_KEY is set.')
+if GEMINI_KEY:
+    print('GEMINI_KEY is set.')
 else:
-    print('GEMINI_API_KEY is not set.')
-genai.configure(api_key=GEMINI_API_KEY)
+    print('GEMINI_KEY is not set.')
+genai.configure(api_key=GEMINI_KEY)
 
 # Generation settings to control the model's output
 generation_config = {
