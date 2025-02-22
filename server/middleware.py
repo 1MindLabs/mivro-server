@@ -1,5 +1,5 @@
-from database import runtime_error, validate_user_profile
 from flask import Response, jsonify, request
+from database import runtime_error, validate_user_profile
 
 
 def auth_handler() -> Response:

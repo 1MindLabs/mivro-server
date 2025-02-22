@@ -1,14 +1,13 @@
 import os
-
-import google.generativeai as genai
 import requests
-from config import GEMINI_KEY
-from database import runtime_error
-from flask import Blueprint, Response, jsonify, request
+import google.generativeai as genai
 from google.generativeai import GenerativeModel
+from config import GEMINI_KEY
+from flask import Blueprint, Response, jsonify, request
+from werkzeug.utils import secure_filename
 from models import ChatHistory
 from utils import chat_history, health_profile
-from werkzeug.utils import secure_filename
+from database import runtime_error
 
 # Blueprint for the ai routes
 ai_blueprint = Blueprint("ai", __name__)

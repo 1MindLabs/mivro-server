@@ -1,10 +1,10 @@
+from flask import Flask, jsonify
+from config import FLASK_KEY
 from auth import auth_blueprint
 from search import search_blueprint
 from gemini import ai_blueprint
 from user import user_blueprint
 from chat import chat_blueprint
-from config import FLASK_KEY
-from flask import Flask, jsonify
 from flask_cors import CORS
 from middleware import auth_handler, error_handler
 

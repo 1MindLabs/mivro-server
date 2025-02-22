@@ -1,6 +1,6 @@
 import requests
-from database import runtime_error, user_reference
 from flask import Blueprint, Response, jsonify, request
+from database import runtime_error, user_reference
 
 # Blueprint for the chat routes
 chat_blueprint = Blueprint("chat", __name__)

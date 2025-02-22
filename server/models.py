@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from config import DEFAULT_NAME, DEFAULT_PHOTO
 
 

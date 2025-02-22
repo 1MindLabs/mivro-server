@@ -2,10 +2,7 @@ import json
 import sys
 from datetime import datetime
 
-from database import database_history, database_search, product_not_found, runtime_error
 from flask import Blueprint, Response, jsonify, request
-from gemini import lumi, swapr
-from mapping import additive_name, grade_color, nova_name, score_assessment
 from openfoodfacts import API, APIVersion, Country, Environment, Flavor
 from utils import (
     filter_additive,
@@ -14,6 +11,9 @@ from utils import (
     filter_ingredient,
     filter_nutriment,
 )
+from mapping import additive_name, grade_color, nova_name, score_assessment
+from gemini import lumi, swapr
+from database import database_history, database_search, product_not_found, runtime_error
 
 # Blueprint for the search routes
 search_blueprint = Blueprint("search", __name__)

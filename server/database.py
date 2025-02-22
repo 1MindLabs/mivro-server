@@ -2,9 +2,9 @@ from datetime import datetime
 
 import firebase_admin
 from firebase_admin import credentials, firestore
+from werkzeug.security import check_password_hash, generate_password_hash
 from fuzzywuzzy import fuzz
 from models import AccountInfo, ScanHistory, SearchHistory
-from werkzeug.security import check_password_hash, generate_password_hash
 
 # Initialize the Firebase Admin SDK with the service account key
 credential = credentials.Certificate("firebase-config.json")

@@ -1,12 +1,12 @@
+from flask import Blueprint, Response, jsonify, request
+from firebase_admin import auth, firestore
+from models import FavoriteProduct, HealthProfile
 from database import (
     flagged_reference,
     runtime_error,
     save_health_profile,
     user_reference,
 )
-from firebase_admin import auth, firestore
-from flask import Blueprint, Response, jsonify, request
-from models import FavoriteProduct, HealthProfile
 
 # Blueprint for the user routes
 user_blueprint = Blueprint("user", __name__)

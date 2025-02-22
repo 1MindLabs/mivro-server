@@ -1,3 +1,5 @@
+from flask import Blueprint, Response, jsonify, request, session
+from firebase_admin import auth
 from database import (
     register_user_profile,
     remove_user_profile,
@@ -5,8 +7,6 @@ from database import (
     user_reference,
     validate_user_profile,
 )
-from firebase_admin import auth
-from flask import Blueprint, Response, jsonify, request, session
 
 # Blueprint for the authentication routes
 auth_blueprint = Blueprint("auth", __name__)

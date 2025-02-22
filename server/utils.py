@@ -1,8 +1,8 @@
 import json
 import re
 
-from database import user_reference
 from mapping import food_icon
+from database import user_reference
 
 # with open('metadata/nutrient_limits.json') as file:
 #     nutrient_limits = json.load(file)
