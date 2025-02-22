@@ -85,7 +85,9 @@ def filter_data(product_data: dict) -> dict:
                 for item in value
             ]
             if isinstance(value, list)
-            else re.sub(r"^en:", "", value) if isinstance(value, str) else value
+            else re.sub(r"^en:", "", value)
+            if isinstance(value, str)
+            else value
         )
         for key, value in product_data.items()
     }

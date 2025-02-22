@@ -1,5 +1,10 @@
-from database import (register_user_profile, remove_user_profile,
-                      runtime_error, user_reference, validate_user_profile)
+from database import (
+    register_user_profile,
+    remove_user_profile,
+    runtime_error,
+    user_reference,
+    validate_user_profile,
+)
 from firebase_admin import auth
 from flask import Blueprint, Response, jsonify, request, session
 

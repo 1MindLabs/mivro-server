@@ -1,5 +1,9 @@
-from database import (flagged_reference, runtime_error, save_health_profile,
-                      user_reference)
+from database import (
+    flagged_reference,
+    runtime_error,
+    save_health_profile,
+    user_reference,
+)
 from firebase_admin import auth, firestore
 from flask import Blueprint, Response, jsonify, request
 from models import FavoriteProduct, HealthProfile
@@ -208,7 +212,7 @@ def clear_history() -> Response:
         user_document.update({path_map.get(request.path): firestore.DELETE_FIELD})
 
         formatted_message = (
-            f'{path_map.get(request.path).replace("_", " ").capitalize()}'
+            f"{path_map.get(request.path).replace('_', ' ').capitalize()}"
         )
         return jsonify({"message": f"{formatted_message} cleared successfully."})
     except Exception as exc:

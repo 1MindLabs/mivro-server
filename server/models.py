@@ -48,8 +48,7 @@ class HealthProfile:
         dietary_preferences: list = None,
         medical_conditions: list = None,
     ):
-        from utils import \
-            calculate_bmi  # Importing here to avoid circular import error
+        from utils import calculate_bmi  # Importing here to avoid circular import error
 
         self.age = age
         self.gender = gender
