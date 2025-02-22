@@ -51,21 +51,21 @@ with open('instructions/savora_instructions.md', 'r') as file:
 
 # Initialize the Gemini model with custom settings and instructions
 lumi_llm = GenerativeModel(
-    model_name='gemini-1.5-flash-latest',
+    model_name='gemini-2.0-flash',
     generation_config=generation_config,
     safety_settings=safety_settings,
     system_instruction=lumi_instructions
 )
 
 swapr_llm = GenerativeModel(
-    model_name='gemini-1.5-flash-latest',
+    model_name='gemini-2.0-flash',
     generation_config=generation_config,
     safety_settings=safety_settings,
     system_instruction=swapr_instructions
 )
 
 savora_llm = GenerativeModel(
-    model_name='gemini-1.5-flash-latest',
+    model_name='gemini-2.0-flash',
     generation_config=generation_config,
     safety_settings=safety_settings,
     system_instruction=savora_instructions
