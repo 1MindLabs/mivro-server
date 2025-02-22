@@ -1,12 +1,12 @@
 from auth import auth_blueprint
+from search import search_blueprint
+from gemini import ai_blueprint
+from user import user_blueprint
 from chat import chat_blueprint
 from config import FLASK_KEY
 from flask import Flask, jsonify
 from flask_cors import CORS
-from gemini import ai_blueprint
 from middleware import auth_handler, error_handler
-from search import search_blueprint
-from user import user_blueprint
 
 app = Flask(__name__)  # Initialize Flask application instance
 app.secret_key = FLASK_KEY  # Set the Flask secret key for session management
