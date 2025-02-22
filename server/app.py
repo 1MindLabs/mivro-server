@@ -1,5 +1,5 @@
 # Core library imports: Flask setup
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 
 # Local project-specific imports: Configuration, blueprints, and middleware
@@ -34,6 +34,10 @@ CORS(app, resources={
         'supports_credentials': True
     }
 })
+
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({'status': 'ok'}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True) # Run the app on localhost:5000 in debug mode
