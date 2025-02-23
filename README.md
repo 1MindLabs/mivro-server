@@ -108,7 +108,7 @@ Follow these steps to set up and run the Mivro Python Server on your local machi
    - Create a `.env` file in the project root directory with the following template:
 
      ```ini
-     FLASK_KEY=your_secret_key
+     FLASK_SECRET_KEY=your_secret_key
      GEMINI_KEY=your_GEMINI_KEY
      ```
 

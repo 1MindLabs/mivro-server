@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from config import FLASK_KEY
+from config import FLASK_SECRET_KEY
 from auth import auth_blueprint
 from search import search_blueprint
 from gemini import ai_blueprint
@@ -9,7 +9,7 @@ from flask_cors import CORS
 from middleware import auth_handler, error_handler
 
 app = Flask(__name__)  # Initialize Flask application instance
-app.secret_key = FLASK_KEY  # Set the Flask secret key for session management
+app.secret_key = FLASK_SECRET_KEY  # Set the Flask secret key for session management
 
 # Register blueprints for API routes
 app.register_blueprint(auth_blueprint, url_prefix="/api/v1/auth")
@@ -41,7 +41,7 @@ def health():
     return jsonify({"status": "ok"}), 200
 
 
-if __name__ == "__main__":
-    app.run(
-        host="0.0.0.0", port=5000, debug=True
-    )  # Run the app on localhost:5000 in debug mode
+# if __name__ == "__main__":
+#     app.run(
+#         host="0.0.0.0", port=5000, debug=True
+#     )  # Run the app on localhost:5000 in debug mode

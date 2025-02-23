@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Access the environment variables
-FLASK_KEY = os.getenv("FLASK_KEY")
+FLASK_SECRET_KEY = os.getenv("FLASK_SECRET_KEY")
 GEMINI_KEY = os.getenv("GEMINI_KEY")
 # FIREBASE_KEY = os.getenv('FIREBASE_KEY')
 

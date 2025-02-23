@@ -1,0 +1,10 @@
+services:
+  app:
+    container_name: mivro_container
+    build: .
+    env_file: .env
+    command: python -m flask run
+    ports:
+      - "5000:5000"
+    volumes:
+      - ".:/mivro-python"
