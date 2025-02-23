@@ -44,6 +44,7 @@ packaging==24.2
 platformdirs==4.3.6
 pluggy==1.5.0
 pre_commit==4.1.0
+prometheus_client==0.21.1
 proto-plus==1.26.0
 protobuf==5.29.3
 pyasn1==0.6.1

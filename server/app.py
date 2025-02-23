@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from config import FLASK_SECRET_KEY
+from metrics import metrics_blueprint
 from auth import auth_blueprint
 from search import search_blueprint
 from gemini import ai_blueprint
@@ -12,6 +13,7 @@ app = Flask(__name__)  # Initialize Flask application instance
 app.secret_key = FLASK_SECRET_KEY  # Set the Flask secret key for session management
 
 # Register blueprints for API routes
+app.register_blueprint(metrics_blueprint, url_prefix="/api/v1")
 app.register_blueprint(auth_blueprint, url_prefix="/api/v1/auth")
 app.register_blueprint(search_blueprint, url_prefix="/api/v1/search")
 app.register_blueprint(ai_blueprint, url_prefix="/api/v1/ai")
