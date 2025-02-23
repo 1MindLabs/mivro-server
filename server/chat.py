@@ -6,7 +6,7 @@ from database import runtime_error, user_reference
 chat_blueprint = Blueprint("chat", __name__)
 
 
-@chat_blueprint.route("/load-message", methods=["POST"])
+@chat_blueprint.route("/load-message", methods=["GET"])
 def load_message() -> Response:
     # Get email value from the request headers
     email = request.headers.get("Mivro-Email")
@@ -23,7 +23,7 @@ def load_message() -> Response:
         return jsonify({"error": str(exc)}), 500
 
 
-@chat_blueprint.route("/update-message", methods=["POST"])
+@chat_blueprint.route("/update-message", methods=["PUT"])
 def update_message() -> Response:
     # Get email, old message, and new message values from the incoming JSON data
     email = request.headers.get("Mivro-Email")
@@ -82,7 +82,7 @@ def update_message() -> Response:
         return jsonify({"error": str(exc)}), 500
 
 
-@chat_blueprint.route("/delete-message", methods=["POST"])
+@chat_blueprint.route("/delete-message", methods=["DELETE"])
 def delete_message() -> Response:
     # Get email and delete message values from the incoming JSON data
     email = request.headers.get("Mivro-Email")

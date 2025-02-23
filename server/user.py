@@ -12,7 +12,7 @@ from database import (
 user_blueprint = Blueprint("user", __name__)
 
 
-@user_blueprint.route("/load-profile", methods=["POST"])
+@user_blueprint.route("/load-profile", methods=["GET"])
 def load_profile() -> Response:
     # Get email value from the request headers
     email = request.headers.get("Mivro-Email")
@@ -28,7 +28,7 @@ def load_profile() -> Response:
         return jsonify({"error": str(exc)}), 500
 
 
-@user_blueprint.route("/update-profile", methods=["POST"])
+@user_blueprint.route("/update-profile", methods=["PUT"])
 def update_profile() -> Response:
     # Get email value from the request headers
     email = request.headers.get("Mivro-Email")
@@ -81,7 +81,7 @@ def update_profile() -> Response:
         return jsonify({"error": str(exc)}), 500
 
 
-@user_blueprint.route("/health-profile", methods=["POST"])
+@user_blueprint.route("/health-profile", methods=["PUT"])
 def health_profile() -> Response:
     # Get email value from the request headers
     email = request.headers.get("Mivro-Email")
@@ -188,10 +188,10 @@ def flag_product() -> Response:
         return jsonify({"error": str(exc)}), 500
 
 
-@user_blueprint.route("/clear-scan", methods=["POST"])
-@user_blueprint.route("/clear-search", methods=["POST"])
-@user_blueprint.route("/clear-chat", methods=["POST"])
-@user_blueprint.route("/clear-favorite", methods=["POST"])
+@user_blueprint.route("/clear-scan", methods=["DELETE"])
+@user_blueprint.route("/clear-search", methods=["DELETE"])
+@user_blueprint.route("/clear-chat", methods=["DELETE"])
+@user_blueprint.route("/clear-favorite", methods=["DELETE"])
 def clear_history() -> Response:
     # Get email value from the request headers
     email = request.headers.get("Mivro-Email")

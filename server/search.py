@@ -27,7 +27,7 @@ api = API(
 )
 
 
-@search_blueprint.route("/barcode", methods=["POST"])
+@search_blueprint.route("/barcode", methods=["GET"])
 def barcode() -> Response:
     try:
         # Start the timer for measuring the response time
@@ -119,7 +119,7 @@ def barcode() -> Response:
 
 
 # DEPRECATED: text_search function fails to return the expected results from the Open Food Facts API (v0.4.0)
-# @search_blueprint.route('/text', methods=['POST'])
+# @search_blueprint.route('/text', methods=['GET'])
 # def text() -> Response:
 #     try:
 #         email = request.form.get('email')
@@ -136,7 +136,7 @@ def barcode() -> Response:
 #         return jsonify({'error': str(exc)}), 500
 
 
-@search_blueprint.route("/database", methods=["POST"])
+@search_blueprint.route("/database", methods=["GET"])
 def database() -> Response:
     try:
         # Start the timer for measuring the response time

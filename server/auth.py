@@ -95,7 +95,7 @@ def reset_password() -> Response:
         return jsonify({"error": str(exc)}), 500
 
 
-@auth_blueprint.route("/update-email", methods=["POST"])
+@auth_blueprint.route("/update-email", methods=["PUT"])
 def update_email() -> Response:
     # Get current email and new email values from the incoming JSON data
     current_email = request.headers.get("Mivro-Email")
@@ -138,7 +138,7 @@ def logout() -> Response:
         return jsonify({"error": "User not logged in."}), 401
 
 
-@auth_blueprint.route("/delete-account", methods=["POST"])
+@auth_blueprint.route("/delete-account", methods=["DELETE"])
 def delete_account() -> Response:
     # Get email value from the request headers
     email = request.headers.get("Mivro-Email")

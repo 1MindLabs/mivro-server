@@ -110,7 +110,7 @@ def swapr(email: str, product_data: dict) -> Response:
 
         # Filter the response to remove bold formatting and search the database for the product name
         filtered_response = bot_response.text.replace("**", "")
-        database_response = requests.post(
+        database_response = requests.get(
             "http://localhost:5000/api/v1/search/database",
             headers={
                 "Mivro-Email": email,
