@@ -1,8 +1,9 @@
 import os
+import json
 import requests
 import google.generativeai as genai
 from google.generativeai import GenerativeModel
-from config import GEMINI_KEY
+from config import GEMINI_API_KEY
 from flask import Blueprint, Response, jsonify, request
 from werkzeug.utils import secure_filename
 from models import ChatHistory
@@ -12,11 +13,11 @@ from database import runtime_error
 # Blueprint for the ai routes
 ai_blueprint = Blueprint("ai", __name__)
 # Load the Gemini API key from the environment variables
-if GEMINI_KEY:
-    print("GEMINI_KEY is set.")
+if GEMINI_API_KEY:
+    print("GEMINI_API_KEY is set.")
 else:
-    print("GEMINI_KEY is not set.")
-genai.configure(api_key=GEMINI_KEY)
+    print("GEMINI_API_KEY is not set.")
+genai.configure(api_key=GEMINI_API_KEY)
 
 # Generation settings to control the model's output
 generation_config = {
@@ -24,11 +25,11 @@ generation_config = {
     "top_p": 0.95,
     "top_k": 64,
     "max_output_tokens": 8192,
-    "response_mime_type": "text/plain",
+    "response_mime_type": "application/json",
 }
 
 # Safety settings to block harmful content (BLOCK_NONE is set to ignore triggers in product data for accurate context processing)
-# Thresholds: BLOCK_NONE, BLOCK_LOW_AND_ABOVE, BLOCK_MEDIUM_AND_ABOVE, BLOCK_ONLY_HIGH
+# Thresholds: https://ai.google.dev/gemini-api/docs/safety-settings
 safety_settings = [
     {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
     {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
@@ -36,15 +37,16 @@ safety_settings = [
     {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
 ]
 
+
 # Load system instructions for the Gemini model
-with open("instructions/lumi_instructions.md", "r") as file:
-    lumi_instructions = file.read()
+def load_instructions(file_path):
+    with open(file_path, "r") as file:
+        return file.read()
 
-with open("instructions/swapr_instructions.md", "r") as file:
-    swapr_instructions = file.read()
 
-with open("instructions/savora_instructions.md", "r") as file:
-    savora_instructions = file.read()
+lumi_instructions = load_instructions("instructions/lumi_instructions.md")
+swapr_instructions = load_instructions("instructions/swapr_instructions.md")
+savora_instructions = load_instructions("instructions/savora_instructions.md")
 
 # Initialize the Gemini model with custom settings and instructions
 lumi_llm = GenerativeModel(
@@ -82,20 +84,15 @@ def lumi(product_data: dict) -> Response:
         if not email or not product_data:
             return jsonify({"error": "Email and product data are required."}), 400
 
-        health_data = health_profile(
-            email
-        )  # Retrieve the user's health profile from Firestore (if any)
+        # Retrieve the user's health profile from Firestore (if any)
+        health_data = health_profile(email)
         # Send the user's health profile and product data to the Gemini model
         user_message = f"Health Profile: {health_data}\nProduct Data: {product_data}"
         bot_response = lumi_chat_session.send_message(user_message)
 
         # Filter the response to remove code blocks and return the evaluated product data
-        filtered_response = bot_response.text.replace("```python", "").replace(
-            "```", ""
-        )
-        return eval(
-            filtered_response
-        )  # If eval() throws an error, use ast.literal_eval() or json.loads() instead
+        # filtered_response = bot_response.text.replace("```python", "").replace("```", "")
+        return json.loads(bot_response.text)
     except Exception as exc:
         runtime_error("lumi", str(exc), email=email)
         return jsonify({"error": str(exc)}), 500

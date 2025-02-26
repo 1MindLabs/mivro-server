@@ -7,7 +7,7 @@ load_dotenv()
 
 # Access the environment variables
 FLASK_SECRET_KEY = os.getenv("FLASK_SECRET_KEY")
-GEMINI_KEY = os.getenv("GEMINI_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # FIREBASE_KEY = os.getenv('FIREBASE_KEY')
 
 # Set the default name and photo for a user

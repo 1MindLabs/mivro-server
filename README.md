@@ -114,8 +114,8 @@ Follow these steps to set up and run the Mivro Python Server on your local machi
      FLASK_DEBUG=1
      FLASK_RUN_HOST=0.0.0.0
      FLASK_RUN_PORT=5000
-     FLASK_SECRET_KEY=your_secret_key
-     GEMINI_KEY=your_gemini_key
+     FLASK_SECRET_KEY=your-secret-key
+     GEMINI_API_KEY=your-api-key
      ```
 
    - Create a `firebase-config.json` file in the project root directory with the following template:
