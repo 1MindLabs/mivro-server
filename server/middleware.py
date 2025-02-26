@@ -8,6 +8,8 @@ def auth_handler() -> Response:
 
     # List of routes that do not require authentication
     unrestricted_routes = [
+        "/health",
+        "/metrics",
         "/api/v1/auth/signup",
         "/api/v1/auth/verify-email",
         "/api/v1/auth/signin",

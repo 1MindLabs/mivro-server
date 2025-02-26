@@ -1,6 +1,6 @@
 services:
   app:
-    container_name: mivro_container
+    container_name: mivro_app
     build: .
     env_file: .env
     command: python -m flask run
@@ -8,3 +8,27 @@ services:
       - "5000:5000"
     volumes:
       - ".:/mivro-python"
+    networks:
+      - mivro_network
+
+  prometheus:
+    image: prom/prometheus
+    container_name: mivro_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - "./prometheus.yaml:/etc/prometheus/prometheus.yml"
+    networks:
+      - mivro_network
+
+  grafana:
+    image: grafana/grafana
+    container_name: mivro_grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - mivro_network
+
+networks:
+  mivro_network:
+    driver: bridge

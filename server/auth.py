@@ -26,9 +26,7 @@ def signup() -> Response:
         auth.create_user(email=email, password=password)
         # Register the user in Firestore database (Workaround for Firebase Auth not supporting direct user data storage in Firestore)
         register_user_profile(email, password)
-        return jsonify(
-            {"message": "User registration successful."}
-        )  # verify-email route not working :(
+        return jsonify({"message": "User registration successful."})
         # return redirect(url_for('auth.verify_email', email=email)) # Redirect to the email verification route
     except Exception as exc:
         runtime_error("signup", str(exc), email=email)
