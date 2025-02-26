@@ -6,6 +6,7 @@ __pycache__/
 # Project-specific files
 tests/
 .github/
+.editorconfig
 .env
 .env.example
 .gitignore
