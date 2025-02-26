@@ -34,6 +34,7 @@ Contains the main application code, including routes, configurations, and utilit
 - **`database.py`**: Provides methods for interacting with the Firebase database, including data storage and retrieval.
 - **`gemini.py`**: Interfaces with the Gemini AI model for nutrient analysis and product recommendations.
 - **`mapping.py`**: Manages mappings for additives, NOVA groups, NutriScore grades, and food icons.
+- **`metrics.py`**: Defines Prometheus metrics for monitoring the application.
 - **`middleware.py`**: Implements global request authentication and error handling.
 - **`models.py`**: Defines the database schema and model structures.
 - **`search.py`**: Connects to the OpenFoodFacts API to process and map product data.
@@ -54,19 +55,19 @@ Follow these steps to set up and run the Mivro Python Server on your local machi
 
 #### Option 1: Docker Setup
 
-1. **Pull the Docker Image**:
+1. **Using Docker Compose**:
 
-   ```bash
-   docker pull areebahmeddd/mivro-python:latest
-   ```
+   - Run the following command:
 
-2. **Run the Docker Container**:
+     ```bash
+     docker-compose up -d
+     ```
 
-   ```bash
-   docker run -p 5000:5000 -e GEMINI_KEY=your_gemini_key areebahmeddd/mivro-python:latest
-   ```
+   - To view logs, use:
 
-   - Replace `your_gemini_key` with your actual API key.
+     ```bash
+     docker logs -f <service_name>
+     ```
 
 #### Option 2: Local Setup
 
@@ -108,8 +109,13 @@ Follow these steps to set up and run the Mivro Python Server on your local machi
    - Create a `.env` file in the project root directory with the following template:
 
      ```ini
+     FLASK_APP=server/app.py
+     FLASK_ENV=development
+     FLASK_DEBUG=1
+     FLASK_RUN_HOST=0.0.0.0
+     FLASK_RUN_PORT=5000
      FLASK_SECRET_KEY=your_secret_key
-     GEMINI_KEY=your_GEMINI_KEY
+     GEMINI_KEY=your_gemini_key
      ```
 
    - Create a `firebase-config.json` file in the project root directory with the following template:
