@@ -118,22 +118,97 @@ def barcode() -> Response:
         return jsonify({"error": str(exc)}), 500
 
 
-# DEPRECATED: text_search function fails to return the expected results from the Open Food Facts API (v0.4.0)
-# @search_blueprint.route('/text', methods=['GET'])
-# def text() -> Response:
-#     try:
-#         email = request.form.get('email')
-#         product_name = request.form.get('product_name')
-#         if not email or not product_name:
-#             return jsonify({'error': 'Email and product name are required.'}), 400
+@search_blueprint.route('/text', methods=['GET'])
+def text() -> Response:
+    try:
+        # Start the timer for measuring the response time
+        start_time = datetime.now()
+        # Get the email and product name values from the headers/request
+        email = request.headers.get("Mivro-Email")
+        product_name = request.json.get("product_name")
+        
+        if not email or not product_name:
+            return jsonify({'error': 'Email and product name are required.'}), 400
 
-#         product_data = api.product.text_search(product_name)
-#         if not product_data:
-#             return jsonify({'error': 'Product not found.'}), 404
+        # Define product schema fields
+        required_data = json.load(open("metadata/product_schema.json"))
+        
+        # Use the v2 API to search for products by name
+        search_result = api.product.search(product_name, fields=required_data)
+        
+        if not search_result or not search_result.get('products'):
+            # Store "Product not found" event in Firestore for analytics
+            product_not_found("text", product_name)
+            return jsonify({'error': 'Product not found.'}), 404
+            
+        # Get the first product from the search results
+        product_data = search_result.get('products', [])[0]
+        
+        # Process the product data similar to the barcode route
+        # Filter the additive numbers, nutriments, and clean the product data
+        product_data["additives_tags"] = filter_additive(
+            product_data.get("additives_tags", [])
+        )
+        filtered_product_data = filter_data(product_data)
+        filtered_product_data["nutriments"] = filter_nutriment(
+            filtered_product_data.get("nutriments", {})
+        )
 
-#         return jsonify(product_data)
-#     except Exception as exc:
-#         return jsonify({'error': str(exc)}), 500
+        # Calculate the response time and size for the filtered product data
+        end_time = datetime.now()
+        response_time = (end_time - start_time).total_seconds()
+        response_size = sys.getsizeof(filtered_product_data) / 1024
+
+        # Update the filtered product data with additional information for analytics
+        filtered_product_data.update(
+            {
+                "search_type": "Open Food Facts API (Text)",
+                "search_response": "200 OK",
+                "response_time": f"{response_time:.2f} seconds",
+                "response_size": f"{response_size:.2f} KB",
+                "search_date": datetime.now().strftime("%d-%B-%Y"),
+                "search_time": datetime.now().strftime("%I:%M %p"),
+                "additives_names": additive_name(
+                    filtered_product_data.get("additives_tags", []),
+                    json.load(open("metadata/additive_names.json")),
+                ),
+                "ingredients": filter_ingredient(
+                    filtered_product_data.get("ingredients", [])
+                ),
+                "nova_group_name": nova_name(
+                    filtered_product_data.get("nova_group", "")
+                ),
+                "nutriments": lumi(filtered_product_data.get("nutriments", {})),
+                "nutriscore_grade_color": grade_color(
+                    filtered_product_data.get("nutriscore_grade", "")
+                ),
+                "nutriscore_assessment": score_assessment(
+                    filtered_product_data.get("nutriscore_score", None)
+                ).title(),
+                "health_risk": lumi(filtered_product_data.get("ingredients", [])),
+                "selected_images": filter_image(
+                    filtered_product_data.get("selected_images", [])
+                ),
+                "recommeded_product": swapr(email, filtered_product_data),
+            }
+        )
+
+        # Calculating derived fields outside as they're not directly provided by the API
+        filtered_product_data["total_nutriments"] = len(
+            filtered_product_data.get("nutriments", {}).get("positive_nutrient", [])
+        ) + len(
+            filtered_product_data.get("nutriments", {}).get("negative_nutrient", [])
+        )
+        filtered_product_data["total_health_risks"] = len(
+            filtered_product_data.get("health_risk", {}).get("ingredient_warnings", [])
+        )
+
+        # Store the search history for the product name in Firestore
+        database_history(email, product_name, filtered_product_data)
+        return jsonify(filtered_product_data)
+    except Exception as exc:
+        runtime_error("text_search", str(exc), product_name=product_name)
+        return jsonify({'error': str(exc)}), 500
 
 
 @search_blueprint.route("/database", methods=["GET"])
