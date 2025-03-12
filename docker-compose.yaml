@@ -7,7 +7,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ".:/mivro-python"
+      - ".:/mivro-server"
     networks:
       - mivro_network
 
@@ -28,6 +28,9 @@ services:
       - "3000:3000"
     networks:
       - mivro_network
+
+# volumes:
+#   mivro_volume:
 
 networks:
   mivro_network:

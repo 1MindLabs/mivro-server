@@ -34,7 +34,7 @@ def barcode() -> Response:
         start_time = datetime.now()
         # Get the email and product barcode values from the incoming JSON data
         email = request.headers.get("Mivro-Email")
-        product_barcode = request.json.get("product_barcode")
+        product_barcode = request.args.get("product_barcode")
 
         if not email or not product_barcode:
             return jsonify({"error": "Email and product barcode are required."}), 400
@@ -143,7 +143,7 @@ def database() -> Response:
         start_time = datetime.now()
         # Get the email and product keyword values from the incoming JSON data
         email = request.headers.get("Mivro-Email")
-        product_keyword = request.json.get("product_keyword")
+        product_keyword = request.args.get("product_keyword")
 
         if not email or not product_keyword:
             return jsonify({"error": "Email and product keyword are required."}), 400

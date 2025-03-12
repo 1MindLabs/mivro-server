@@ -73,12 +73,12 @@ Follow these steps to set up and run the Mivro Python Server on your local machi
 
 1. **Fork the Repository**:
 
-   - Go to the [Mivro Python Server repository](https://github.com/1MindLabs/mivro-python) and click "Fork" to create a copy under your GitHub account.
+   - Go to the [Mivro Python Server repository](https://github.com/1MindLabs/mivro-server) and click "Fork" to create a copy under your GitHub account.
 
 2. **Clone the Repository**:
 
    ```bash
-   git clone https://github.com/<your-username>/mivro-python.git
+   git clone https://github.com/<your-username>/mivro-server.git
    ```
 
 3. **Create a Virtual Environment (Optional but Recommended)**:
@@ -144,12 +144,12 @@ Follow these steps to set up and run the Mivro Python Server on your local machi
 
 To interact with the Mivro Python Server, you can use API calls via Postman or any HTTP client. Below is an example of how to search for a product using its barcode.
 
-**NOTE**: Replace `Mivro-Email`, `Mivro-Password`, and `product_barcode` with actual values depending on the route you are testing.
+**NOTE**: First, register your email at the `/signup` route (`/api/v1/auth/signup`). Replace `Mivro-Email`, `Mivro-Password`, and `product_barcode` with actual values depending on the route you are testing.
 
 ### Example API Call
 
 - **Endpoint**: `/api/v1/search/barcode`
-- **Method**: `POST`
+- **Method**: `GET`
 - **Headers**:
   - `Mivro-Email: your_email@example.com`
   - `Mivro-Password: your_password`
@@ -179,4 +179,4 @@ This project is licensed under the [MIT License](https://github.com/1MindLabs/mi
 ## Acknowledgments
 
 - [Open Food Facts](https://world.openfoodfacts.org) for providing access to a comprehensive food product database.
-- [All Contributors](https://github.com/1MindLabs/mivro-python/graphs/contributors) for their valuable contributions to the development and improvement of this project.
+- [All Contributors](https://github.com/1MindLabs/mivro-server/graphs/contributors) for their valuable contributions to the development and improvement of this project.

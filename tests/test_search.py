@@ -16,7 +16,7 @@ def test_barcode(client):
     response = client.get(
         "/api/v1/search/barcode",
         headers={"Mivro-Email": "test@mivro.org"},
-        json={"product_barcode": "1234567890123"},
+        query_string={"product_barcode": "1234567890123"},
     )
     assert response.status_code == 200 or response.status_code == 404
 
@@ -25,6 +25,6 @@ def test_database(client):
     response = client.get(
         "/api/v1/search/database",
         headers={"Mivro-Email": "test@mivro.org"},
-        json={"product_keyword": "test product"},
+        query_string={"product_keyword": "test product"},
     )
     assert response.status_code == 200 or response.status_code == 404

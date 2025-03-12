@@ -16,7 +16,7 @@ jobs:
       - uses: mr-smithers-excellent/docker-build-push@v6.4
         name: Build & push Docker image
         with:
-          image: areebahmeddd/mivro-python
+          image: areebahmeddd/mivro-server
           tags: latest
           registry: docker.io
           username: ${{ secrets.DOCKER_USERNAME }}
