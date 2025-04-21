@@ -4,17 +4,28 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '.github/**'
+      - 'instructions/**'
+      - 'metadata/**'
+      - 'server/**'
+      - 'tests/**'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4.2.0
-        name: Check out code
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - uses: mr-smithers-excellent/docker-build-push@v6.4
-        name: Build & push Docker image
+      - name: Build & push Docker image
+        uses: mr-smithers-excellent/docker-build-push@v6
         with:
           image: areebahmeddd/mivro-server
           tags: latest
