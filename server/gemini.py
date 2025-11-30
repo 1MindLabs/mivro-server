@@ -1,8 +1,8 @@
 import os
 import json
 import requests
-import google.generativeai as genai
-from google.generativeai import GenerativeModel
+from google import genai
+from google.genai import types
 from config import GEMINI_API_KEY
 from flask import Blueprint, Response, jsonify, request
 from werkzeug.utils import secure_filename
@@ -17,24 +17,21 @@ if GEMINI_API_KEY:
     print("GEMINI_API_KEY is set.")
 else:
     print("GEMINI_API_KEY is not set.")
-genai.configure(api_key=GEMINI_API_KEY)
 
-# Generation settings to control the model's output
-generation_config = {
-    "temperature": 1,
-    "top_p": 0.95,
-    "top_k": 64,
-    "max_output_tokens": 8192,
-    "response_mime_type": "application/json",
-}
+# Initialize the Gemini client with API key
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 # Safety settings to block harmful content (BLOCK_NONE is set to ignore triggers in product data for accurate context processing)
 # Thresholds: https://ai.google.dev/gemini-api/docs/safety-settings
 safety_settings = [
-    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+    types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="BLOCK_NONE"),
+    types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="BLOCK_NONE"),
+    types.SafetySetting(
+        category="HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold="BLOCK_NONE"
+    ),
+    types.SafetySetting(
+        category="HARM_CATEGORY_DANGEROUS_CONTENT", threshold="BLOCK_NONE"
+    ),
 ]
 
 
@@ -47,33 +44,6 @@ def load_instructions(file_path):
 lumi_instructions = load_instructions("instructions/lumi_instructions.md")
 swapr_instructions = load_instructions("instructions/swapr_instructions.md")
 savora_instructions = load_instructions("instructions/savora_instructions.md")
-
-# Initialize the Gemini model with custom settings and instructions
-lumi_llm = GenerativeModel(
-    model_name="gemini-2.0-flash",
-    generation_config=generation_config,
-    safety_settings=safety_settings,
-    system_instruction=lumi_instructions,
-)
-
-swapr_llm = GenerativeModel(
-    model_name="gemini-2.0-flash",
-    generation_config=generation_config,
-    safety_settings=safety_settings,
-    system_instruction=swapr_instructions,
-)
-
-savora_llm = GenerativeModel(
-    model_name="gemini-2.0-flash",
-    generation_config=generation_config,
-    safety_settings=safety_settings,
-    system_instruction=savora_instructions,
-)
-
-# Start a chat session with the Gemini model
-lumi_chat_session = lumi_llm.start_chat(history=[])
-swapr_chat_session = swapr_llm.start_chat(history=[])
-savora_chat_session = savora_llm.start_chat(history=[])
 
 
 @ai_blueprint.route("/lumi", methods=["POST"])
@@ -88,11 +58,19 @@ def lumi(product_data: dict) -> Response:
         health_data = health_profile(email)
         # Send the user's health profile and product data to the Gemini model
         user_message = f"Health Profile: {health_data}\nProduct Data: {product_data}"
-        bot_response = lumi_chat_session.send_message(user_message)
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=user_message,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                system_instruction=lumi_instructions,
+                safety_settings=safety_settings,
+            ),
+        )
 
         # Filter the response to remove code blocks and return the evaluated product data
-        # filtered_response = bot_response.text.replace("```python", "").replace("```", "")
-        return json.loads(bot_response.text)
+        # filtered_response = response.text.replace("```python", "").replace("```", "")
+        return json.loads(response.text)
     except Exception as exc:
         runtime_error("lumi", str(exc), email=email)
         return jsonify({"error": str(exc)}), 500
@@ -103,10 +81,18 @@ def swapr(email: str, product_data: dict) -> Response:
     try:
         # Send the product data to the Gemini model
         user_message = f"Product Data: {product_data}"
-        bot_response = swapr_chat_session.send_message(user_message)
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=user_message,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                system_instruction=swapr_instructions,
+                safety_settings=safety_settings,
+            ),
+        )
 
         # Filter the response to remove bold formatting and search the database for the product name
-        filtered_response = bot_response.text.replace("**", "")
+        filtered_response = response.text.replace("**", "")
         database_response = requests.get(
             "http://localhost:5000/api/v1/search/database",
             headers={
@@ -151,7 +137,14 @@ def savora() -> Response:
 
         # Send the user's message to the Gemini model
         if message_type == "text":
-            bot_response = savora_chat_session.send_message(user_message)
+            bot_response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=user_message,
+                config=types.GenerateContentConfig(
+                    system_instruction=savora_instructions,
+                    safety_settings=safety_settings,
+                ),
+            )
 
         # Upload the media file to the Gemini model and generate content
         elif message_type == "media":
@@ -176,10 +169,15 @@ def savora() -> Response:
             temp_path = os.path.join(file_name)
             media_file.save(temp_path)
 
-            # Upload the media file to the Gemini model using the temporary path
-            user_file = genai.upload_file(temp_path)
-            bot_response = savora_llm.generate_content(
-                [user_file, "\n\n", user_message]
+            # Upload the media file to the Gemini client
+            uploaded_file = client.files.upload(path=temp_path)
+            bot_response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=[uploaded_file, "\n\n", user_message],
+                config=types.GenerateContentConfig(
+                    system_instruction=savora_instructions,
+                    safety_settings=safety_settings,
+                ),
             )
 
             # Delete the temporary file after processing
