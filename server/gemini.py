@@ -3,7 +3,7 @@ import json
 import requests
 from google import genai
 from google.genai import types
-from config import GEMINI_API_KEY
+from config import GEMINI_API_KEY, API_TIMEOUT
 from flask import Blueprint, Response, jsonify, request
 from werkzeug.utils import secure_filename
 from models import ChatHistory
@@ -100,6 +100,7 @@ def swapr(email: str, product_data: dict) -> Response:
                 "Mivro-Password": request.headers.get("Mivro-Password"),
             },
             json={"product_keyword": filtered_response.strip()},
+            timeout=API_TIMEOUT,
         )
 
         if database_response.status_code != 200:

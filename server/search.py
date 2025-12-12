@@ -1,4 +1,3 @@
-import json
 import sys
 from datetime import datetime
 
@@ -10,10 +9,13 @@ from utils import (
     filter_image,
     filter_ingredient,
     filter_nutriment,
+    product_schema,
+    additive_names,
 )
 from mapping import additive_name, grade_color, nova_name, score_assessment
 from gemini import lumi, swapr
 from database import database_history, database_search, product_not_found, runtime_error
+from config import API_TIMEOUT
 
 # Blueprint for the search routes
 search_blueprint = Blueprint("search", __name__)
@@ -24,6 +26,7 @@ api = API(
     flavor=Flavor.off,
     version=APIVersion.v2,
     environment=Environment.org,
+    timeout=API_TIMEOUT,
 )
 
 
@@ -40,17 +43,16 @@ def barcode() -> Response:
             return jsonify({"error": "Email and product barcode are required."}), 400
 
         # Define product schema fields and fetch data from Open Food Facts API using barcode
-        required_data = json.load(open("metadata/product_schema.json"))
-        product_data = api.product.get(product_barcode, fields=required_data)
+        product_data = api.product.get(product_barcode, fields=product_schema)
         if not product_data:
             # Store "Product not found" event in Firestore for analytics
             product_not_found("barcode", product_barcode)
             return jsonify({"error": "Product not found."}), 404
 
         # Check for missing fields in the product data
-        missing_fields = set(required_data) - set(product_data.keys())
-        for field in missing_fields:
-            print(f'Warning: Data for "{field}" is missing.')
+        missing_fields = set(product_schema) - set(product_data.keys())
+        if missing_fields:
+            print(f"Warning: Missing fields for {product_barcode}: {missing_fields}")
 
         # Filter the additive numbers, nutriments, and clean the product data
         product_data["additives_tags"] = filter_additive(
@@ -66,6 +68,11 @@ def barcode() -> Response:
         response_time = (end_time - start_time).total_seconds()
         response_size = sys.getsizeof(filtered_product_data) / 1024
 
+        nutriments = lumi(filtered_product_data.get("nutriments", {}))
+        health_risk = lumi(filtered_product_data.get("ingredients", []))
+        images = filter_image(filtered_product_data.get("selected_images", {}))
+        recommendation = swapr(email, filtered_product_data)
+
         # Update the filtered product data with additional information for analytics
         filtered_product_data.update(
             {
@@ -73,11 +80,11 @@ def barcode() -> Response:
                 "search_response": "200 OK",
                 "response_time": f"{response_time:.2f} seconds",
                 "response_size": f"{response_size:.2f} KB",
-                "search_date": datetime.now().strftime("%d-%B-%Y"),
-                "search_time": datetime.now().strftime("%I:%M %p"),
+                "search_date": datetime.now().strftime("%Y-%m-%d"),
+                "search_time": datetime.now().strftime("%H:%M:%S"),
                 "additives_names": additive_name(
                     filtered_product_data.get("additives_tags", []),
-                    json.load(open("metadata/additive_names.json")),
+                    additive_names,
                 ),
                 "ingredients": filter_ingredient(
                     filtered_product_data.get("ingredients", [])
@@ -85,29 +92,20 @@ def barcode() -> Response:
                 "nova_group_name": nova_name(
                     filtered_product_data.get("nova_group", "")
                 ),
-                "nutriments": lumi(filtered_product_data.get("nutriments", {})),
+                "nutriments": nutriments,
+                "total_nutriments": len(nutriments.get("positive_nutrient", []))
+                + len(nutriments.get("negative_nutrient", [])),
                 "nutriscore_grade_color": grade_color(
                     filtered_product_data.get("nutriscore_grade", "")
                 ),
                 "nutriscore_assessment": score_assessment(
                     filtered_product_data.get("nutriscore_score", None)
                 ).title(),
-                "health_risk": lumi(filtered_product_data.get("ingredients", [])),
-                "selected_images": filter_image(
-                    filtered_product_data.get("selected_images", [])
-                ),
-                "recommeded_product": swapr(email, filtered_product_data),
+                "health_risk": health_risk,
+                "total_health_risks": len(health_risk.get("ingredient_warnings", [])),
+                "selected_images": images,
+                "recommeded_product": recommendation,
             }
-        )
-
-        # Calculating derived fields outside as they're not directly provided by the API
-        filtered_product_data["total_nutriments"] = len(
-            filtered_product_data.get("nutriments", {}).get("positive_nutrient", [])
-        ) + len(
-            filtered_product_data.get("nutriments", {}).get("negative_nutrient", [])
-        )
-        filtered_product_data["total_health_risks"] = len(
-            filtered_product_data.get("health_risk", {}).get("ingredient_warnings", [])
         )
 
         # Store the scan history for the product barcode in Firestore

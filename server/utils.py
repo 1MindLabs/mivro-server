@@ -1,14 +1,20 @@
 import json
-import re
+from pathlib import Path
 
 from mapping import food_icon
 from database import user_reference
 
-# with open('metadata/nutrient_limits.json') as file:
-#     nutrient_limits = json.load(file)
+METADATA_DIR = Path(__file__).parent.parent / "metadata"
 
-with open("metadata/food_categories.json") as file:
+# Load the metadata files for food categories, additive names, and product schema
+with open(METADATA_DIR / "food_categories.json") as file:
     food_categories = json.load(file)
+
+with open(METADATA_DIR / "additive_names.json") as file:
+    additive_names = json.load(file)
+
+with open(METADATA_DIR / "product_schema.json") as file:
+    product_schema = json.load(file)
 
 
 # Function for filtering additive tags and removing the 'i' suffix (Used in search.py)
@@ -78,33 +84,41 @@ def analyse_nutrient(nutrient_data: dict, nutrient_limits: dict) -> dict:
 
 # Function for filtering the product data and removing the 'en:' prefix (Used in search.py)
 def filter_data(product_data: dict) -> dict:
-    product_info = {
-        key: (
-            [
-                re.sub(r"^en:", "", item) if isinstance(item, str) else item
-                for item in value
-            ]
-            if isinstance(value, list)
-            else re.sub(r"^en:", "", value)
-            if isinstance(value, str)
-            else value
-        )
-        for key, value in product_data.items()
-    }
-    return product_info
+    def clean_value(val):
+        if isinstance(val, str):
+            return val.removeprefix("en:")
+        elif isinstance(val, list):
+            return [clean_value(item) for item in val]
+        return val
+
+    return {key: clean_value(value) for key, value in product_data.items()}
 
 
 # Function for filtering the image data and extracting the image link (Used in search.py)
-def filter_image(image_data: dict) -> str:
-    image_link = next(
-        iter(
-            list(image_data.values())[
-                0
-            ].values()  # Return the first image link from the data
-        ),
-        None,
-    )
-    return image_link
+def filter_image(image_data: dict) -> dict:
+    if not image_data or not isinstance(image_data, dict):
+        return {}
+
+    # Try to get front image with display quality
+    if "front" in image_data:
+        front = image_data["front"]
+        if isinstance(front, dict):
+            # New nested structure
+            if "display" in front and isinstance(front["display"], dict):
+                return front["display"]  # Return dict with all language options
+            # Fallback: direct language dict
+            return front
+
+    # Fallback: try to extract any available image
+    for image_type in ["front", "ingredients", "nutrition"]:
+        if image_type in image_data:
+            img = image_data[image_type]
+            if isinstance(img, dict):
+                if "display" in img:
+                    return img["display"]
+                return img
+
+    return {}
 
 
 # Function for retrieving the user's health profile from Firestore (Used in gemini.py)

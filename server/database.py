@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 
 import firebase_admin
 from firebase_admin import credentials, firestore
@@ -7,9 +8,10 @@ from fuzzywuzzy import fuzz
 from models import AccountInfo, ScanHistory, SearchHistory
 
 # Initialize the Firebase Admin SDK with the service account key
-credential = credentials.Certificate("firebase-config.json")
+firebase_config_path = Path(__file__).parent.parent / "firebase-config.json"
+credential = credentials.Certificate(firebase_config_path)
 firebase_admin.initialize_app(credential)
-database = firestore.client()  # Initialize the Firestore database client
+database = firestore.client()
 
 # Create Firestore document references for the collections
 user_reference = database.collection("users")
