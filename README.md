@@ -47,29 +47,96 @@ Follow these steps to set up and run the Mivro Python Server on your local machi
 
 ### Prerequisites
 
-- [Python >= 3.11.9](https://python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe).
-- **Firebase account**: Obtain Firebase credentials by creating a Firebase project [here](https://console.firebase.google.com).
-- **Gemini API key**: Obtain your Gemini API key by signing up for access [here](https://aistudio.google.com/app/apikey).
+- **Python >= 3.11.9**: [Download](https://python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe) (for local setup)
+- **Docker**: [Docker Desktop](https://www.docker.com/products/docker-desktop) (for Docker setup)
+- **Firebase account**: Create a Firebase project [here](https://console.firebase.google.com) and download `firebase-config.json`
+- **Gemini API key**: Get your API key [here](https://aistudio.google.com/app/apikey)
 
 ### Installation
 
-#### Option 1: Docker Setup
+#### Option 1: Docker Compose (Recommended)
 
-1. **Using Docker Compose**:
+1. **Setup Environment Variables**:
 
-   - Run the following command:
+   - Create a `.env` file in the project root:
+
+     ```ini
+     FLASK_APP=server/app.py
+     FLASK_ENV=development
+     FLASK_DEBUG=1
+     FLASK_RUN_HOST=0.0.0.0
+     FLASK_RUN_PORT=5000
+     FLASK_SECRET_KEY=your-secret-key
+     GEMINI_API_KEY=your-gemini-api-key
+     ```
+
+   - Add your `firebase-config.json` file to the project root directory.
+
+2. **Run with Docker Compose**:
+
+   - Start the server:
 
      ```bash
      docker-compose up -d
      ```
 
-   - To view logs, use:
+   - View logs:
 
      ```bash
-     docker logs -f <service_name>
+     docker-compose logs -f api
      ```
 
-#### Option 2: Local Setup
+   - Stop the server:
+
+     ```bash
+     docker-compose down
+     ```
+
+#### Option 2: Docker Build
+
+1. **Setup Environment Variables**:
+
+   - Create a `.env` file in the project root:
+
+     ```ini
+     FLASK_APP=server/app.py
+     FLASK_ENV=production
+     FLASK_DEBUG=0
+     FLASK_RUN_HOST=0.0.0.0
+     FLASK_RUN_PORT=5000
+     FLASK_SECRET_KEY=your-secret-key
+     GEMINI_API_KEY=your-gemini-api-key
+     ```
+
+   - Add your `firebase-config.json` file to the project root directory.
+
+2. **Build and Run**:
+
+   - Build the Docker image:
+
+     ```bash
+     docker build -t mivro-server:latest .
+     ```
+
+   - Run the container:
+
+     ```bash
+     docker run -d -p 5000:5000 --env-file .env -v ./firebase-config.json:/app/firebase-config.json --name mivro-server mivro-server:latest
+     ```
+
+   - Check container logs:
+
+     ```bash
+     docker logs -f mivro-server
+     ```
+
+   - Stop the container:
+
+     ```bash
+     docker stop mivro-server && docker rm mivro-server
+     ```
+
+#### Option 3: Local Setup
 
 1. **Fork the Repository**:
 
@@ -137,7 +204,7 @@ Follow these steps to set up and run the Mivro Python Server on your local machi
 
 7. **Run the Python Application**:
    ```bash
-   python server/app.py
+   flask run
    ```
 
 ## Usage

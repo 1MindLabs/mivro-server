@@ -1,33 +1,36 @@
 services:
   app:
-    container_name: mivro_app
+    container_name: mivro_api
     build: .
     env_file: .env
-    command: python -m flask run
     ports:
       - "5000:5000"
     volumes:
-      - ".:/mivro-server"
+      - "./server:/app/server"
+      - "./firebase-config.json:/app/firebase-config.json"
     networks:
       - mivro_network
+    restart: unless-stopped
 
-  prometheus:
-    image: prom/prometheus
-    container_name: mivro_prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - "./prometheus.yaml:/etc/prometheus/prometheus.yml"
-    networks:
-      - mivro_network
+  # prometheus:
+  #   image: prom/prometheus
+  #   container_name: mivro_prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - "./prometheus.yaml:/etc/prometheus/prometheus.yml"
+  #   networks:
+  #     - mivro_network
+  #   restart: unless-stopped
 
-  grafana:
-    image: grafana/grafana
-    container_name: mivro_grafana
-    ports:
-      - "3000:3000"
-    networks:
-      - mivro_network
+  # grafana:
+  #   image: grafana/grafana
+  #   container_name: mivro_grafana
+  #   ports:
+  #     - "3000:3000"
+  #   networks:
+  #     - mivro_network
+  #   restart: unless-stopped
 
 # volumes:
 #   mivro_volume:

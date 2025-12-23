@@ -1,9 +1,8 @@
 import os
 import json
-import requests
 from google import genai
 from google.genai import types
-from config import GEMINI_API_KEY, API_TIMEOUT
+from config import GEMINI_API_KEY
 from flask import Blueprint, Response, jsonify, request
 from werkzeug.utils import secure_filename
 from models import ChatHistory
@@ -47,12 +46,12 @@ savora_instructions = load_instructions("instructions/savora_instructions.md")
 
 
 @ai_blueprint.route("/lumi", methods=["POST"])
-def lumi(product_data: dict) -> Response:
+def lumi(product_data: dict) -> dict:
     try:
         # Get email value from the request headers
         email = request.headers.get("Mivro-Email")
         if not email or not product_data:
-            return jsonify({"error": "Email and product data are required."}), 400
+            return {"error": "Email and product data are required."}
 
         # Retrieve the user's health profile from Firestore (if any)
         health_data = health_profile(email)
@@ -68,16 +67,19 @@ def lumi(product_data: dict) -> Response:
             ),
         )
 
-        # Filter the response to remove code blocks and return the evaluated product data
-        # filtered_response = response.text.replace("```python", "").replace("```", "")
         return json.loads(response.text)
     except Exception as exc:
         runtime_error("lumi", str(exc), email=email)
-        return jsonify({"error": str(exc)}), 500
+        # Return proper empty structure for frontend compatibility
+        return {
+            "positive_nutrient": [],
+            "negative_nutrient": [],
+            "ingredient_warnings": [],
+        }
 
 
 @ai_blueprint.route("/swapr", methods=["POST"])
-def swapr(email: str, product_data: dict) -> Response:
+def swapr(email: str, product_data: dict) -> dict:
     try:
         # Send the product data to the Gemini model
         user_message = f"Product Data: {product_data}"
@@ -91,27 +93,12 @@ def swapr(email: str, product_data: dict) -> Response:
             ),
         )
 
-        # Filter the response to remove bold formatting and search the database for the product name
-        filtered_response = response.text.replace("**", "")
-        database_response = requests.get(
-            "http://localhost:5000/api/v1/search/database",
-            headers={
-                "Mivro-Email": email,
-                "Mivro-Password": request.headers.get("Mivro-Password"),
-            },
-            json={"product_keyword": filtered_response.strip()},
-            timeout=API_TIMEOUT,
-        )
-
-        if database_response.status_code != 200:
-            # runtime_error('swapr', 'Database search failed.', middleware=database_response.json(), email=email)
-            # return jsonify({'error': 'Database search failed.'}), database_response.status_code
-            return {"product_name": filtered_response.strip()}
-
-        return database_response.json()
+        # Return recommended product name
+        filtered_response = response.text.replace('"', "").replace("**", "").strip()
+        return {"product_name": filtered_response}
     except Exception as exc:
         runtime_error("swapr", str(exc), email=email)
-        return jsonify({"error": str(exc)}), 500
+        return {"product_name": "No recommendation available"}
 
 
 @ai_blueprint.route("/savora", methods=["POST"])

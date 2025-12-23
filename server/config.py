@@ -14,5 +14,5 @@ DEFAULT_NAME = "Mivro User"
 DEFAULT_PHOTO = "https://images.pexels.com/photos/756856/pexels-photo-756856.jpeg"
 
 # Set the default timeout values for API requests
-API_TIMEOUT = 30
+API_TIMEOUT = 60
 GEMINI_TIMEOUT = 60

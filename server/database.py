@@ -49,6 +49,7 @@ def database_history(email: str, product_barcode: str, product_data: dict) -> No
         return {"error": "Firestore storage error: " + str(exc)}, 500
 
 
+# DEPRECATED
 def database_search(email: str, product_keyword: str, search_keys: list) -> dict:
     try:
         # Retrieve the scan history of all user documents in Firestore
@@ -111,9 +112,7 @@ def product_not_found(search_type: str, search_value: str) -> None:
             {"search_values": firestore.ArrayUnion([search_value])}, merge=True
         )  # Merge the search value with the existing not found document (if any)
 
-        print(
-            f'[Database] "{search_value}" added to the "{document_name}" not found list.'
-        )
+        print(f'[Database] "{search_value}" -> "{document_name}" not found list.')
     except Exception as exc:
         runtime_error(
             "product_not_found",

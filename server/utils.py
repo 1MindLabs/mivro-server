@@ -91,7 +91,13 @@ def filter_data(product_data: dict) -> dict:
             return [clean_value(item) for item in val]
         return val
 
-    return {key: clean_value(value) for key, value in product_data.items()}
+    filtered = {
+        key: clean_value(product_data.get(key))
+        for key in product_schema
+        if key in product_data
+    }
+
+    return filtered
 
 
 # Function for filtering the image data and extracting the image link (Used in search.py)

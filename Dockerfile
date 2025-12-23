@@ -1,22 +1,20 @@
-# Stage 1: Builder Stage
-FROM python:3.11-slim AS builder
+FROM python:3.11-slim
 
-ARG APP_HOME=/mivro-server
-# ARG BUILD_ENVIRONMENT="production"
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    FLASK_APP=server/app.py
 
-WORKDIR $APP_HOME
+WORKDIR /app
 
-# ENV BUILD_ENVIRONMENT=$BUILD_ENVIRONMENT
-
+# Copy and install dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt --target /dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Stage 2: Runner Stage
-FROM python:3.11-slim AS runner
-
-WORKDIR $APP_HOME
-
-COPY --from=builder /dependencies /usr/local/lib/python3.11/site-packages
+# Copy application code
 COPY . .
 
 EXPOSE 5000
+
+# Run Flask application
+CMD ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5000"]
