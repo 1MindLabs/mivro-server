@@ -28,12 +28,16 @@ CORS(
     resources={
         r"/api/*": {
             "origins": [
-                "https://mivro.org",
-                "https://*.mivro.org",
+                "https://mivro.1mindlabs.org",
                 "http://localhost:3000",
             ],
-            "methods": ["GET", "POST", "PUT", "DELETE"],
-            "allow_headers": ["Content-Type", "Authorization"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": [
+                "Content-Type",
+                "Authorization",
+                "Mivro-Email",
+                "Mivro-Password",
+            ],
             "supports_credentials": True,
         }
     },

@@ -1,5 +1,5 @@
 services:
-  app:
+  api:
     container_name: mivro_api
     build: .
     env_file: .env
@@ -13,7 +13,7 @@ services:
     restart: unless-stopped
 
   # prometheus:
-  #   image: prom/prometheus
+  #   image: prom/prometheus:latest
   #   container_name: mivro_prometheus
   #   ports:
   #     - "9090:9090"
@@ -24,7 +24,7 @@ services:
   #   restart: unless-stopped
 
   # grafana:
-  #   image: grafana/grafana
+  #   image: grafana/grafana:latest
   #   container_name: mivro_grafana
   #   ports:
   #     - "3000:3000"

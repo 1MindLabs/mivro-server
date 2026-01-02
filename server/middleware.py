@@ -22,7 +22,17 @@ def auth_handler() -> Response:
     # Get email and password values from the request headers
     email = request.headers.get("Mivro-Email")
     password = request.headers.get("Mivro-Password")
+    firebase_token = request.headers.get("Authorization")
 
+    # Allow Firebase token authentication (website) or email+password (extension)
+    if firebase_token and firebase_token.startswith("Bearer "):
+        # Firebase authentication - only email is required
+        if not email:
+            return jsonify({"error": "Email is required."}), 401
+        # Skip password validation for Firebase tokens
+        return None
+
+    # Traditional email+password authentication (extension)
     if not email or not password:
         return jsonify({"error": "Email and password are required."}), 401
 
